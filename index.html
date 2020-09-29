@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="element.css">
+    <style>
+        .box {
+            height: 200px;
+        }
+
+        .box img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .el-row {
+            margin-bottom: 20px;
+        }
+
+        .el-row:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <router-view></router-view>
+</div>
+</body>
+<script src="jquery.min.js"></script>
+<script src="vue.js"></script>
+<script src="vuerouter.js"></script>
+<script src="element.js"></script>
+<script src="utools-mock.js"></script>
+<script>
+
+    utools.onPluginEnter(({code, type, payload, optional})=>{
+        let allDocs = utools.db.allDocs("dataList");
+        let values = [];
+        for (let index in allDocs) {
+            if (!allDocs[index].title) {
+                allDocs[index].title = allDocs;
+            }
+            values.push(allDocs[index]);
+        }
+        
+        const Home = {
+            template: '<div><el-row :gutter="20" v-for="rowBox in boxSplitList" >\n' +
+                '        <el-col :span="6" v-for="box in rowBox">\n' +
+                '            <el-card class="box-card">' +
+                '<div slot="header" class="clearfix">\n' +
+                '    <span>{{box.name}}</span>\n' +
+                '  </div>\n' +
+                '                <div class="box">\n' +
+                '                    <a v-bind:href="box.url" v-on:click="openURL(box.url)">\n' +
+                '                        <img :src="box.imageSrc" />\n' +
+                '                    </a>\n' +
+                '                </div>\n' +
+                '            </el-card>\n' +
+                '        </el-col>\n' +
+                '    </el-row></div>'
+            ,
+            computed: {
+                boxSplitList: function () {
+                    let newList = [];
+                    for (var i in this.boxList) {
+                        if (i % 4 === 0) {
+                            newList.push([]);
+                        }
+                        let box = this.boxList[i];
+                        if (box.imageSrc == null || box.imageSrc.trim() === '') {
+                            box.imageSrc = box.url + '/favicon.ico';
+                        }
+                        if(box.name == null || box.name.trim === ''){
+                            box.name = box.url;
+                        }
+                        newList[newList.length - 1].push(box);
+                    }
+                    return newList;
+                }
+            },
+            data: function () {
+                return {
+                    boxList: values
+                }
+            },
+            methods : {
+                openURL : function(url){
+                    utools.shellOpenExternal(url);
+                }
+            }
+        };
+        const Conf = {
+            template: '<div>' +
+                '<el-row>' +
+                '<el-collapse>' +
+                '<el-collapse-item :title="box.title" :name="box._id" v-for="(box, index) in boxList">' +
+                '<el-form ref="form" label-width="140px">\n' +
+                '<div >' +
+                ' <el-form-item label="URL:">' +
+                ' <el-input placeholder="请输入网址" v-model="box.url" v-on:input="saveDB(box)">\n' +
+                '  </el-input>' +
+                '</el-form-item>' +
+                ' <el-form-item label="名称:">' +
+                ' <el-input placeholder="请输入名称" v-model="box.name" v-on:input="saveDB(box)">\n' +
+                '  </el-input>' +
+                '</el-form-item>' +
+                ' <el-form-item label="封面图片地址:">' +
+                ' <el-input placeholder="请输入图片地址" v-model="box.imageSrc" v-on:input="saveDB(box)">\n' +
+                '  </el-input>' +
+                '</el-form-item>' +
+                '<el-row>' +
+                '<el-col :offset="20">' +
+                '<el-button round v-on:click="del(index)">删除</el-button>' +
+                '</el-col>' +
+                '</el-row>' +
+                '</div>' +
+                '</el-form>' +
+                '</el-collapse-item>' +
+                '</el-collapse>' +
+                '</el-row>' +
+                '<el-row>' +
+                '<el-col :offset="20">' +
+                ' <el-button round v-on:click="add">添加网站</el-button>' +
+                '</el-col>' +
+                '</el-row>' +
+                '</div>',
+            data: function () {
+                return {
+                    boxList: values
+                }
+            },
+            watch : {
+              boxList : {
+                  handler: function(value, old) {
+                      value.forEach((v) => v.url == null? v.title = "新的工具盒" : (v.title = v.url));
+                  },
+                  deep : true
+              }
+            },
+            methods: {
+                add: function () {
+                    this.boxList.push({
+                        _id: 'dataList-' + Math.random().toString(36),
+                        title : "新的工具盒"
+                    })
+                },
+                del : function(index){
+                    let current = this.boxList[index];
+                    this.boxList.splice(index, 1);
+                    utools.db.remove(current._id);
+                },
+                saveDB : function(box) {
+                    utools.db.put(box)
+                    box._rev = utools.db.get(box._id)._rev
+                }
+            }
+        }
+
+        const routes = [
+            {path: '/', component: Home,},
+            {path: '/config', component: Conf}
+        ]
+
+        const router = new VueRouter({
+            routes
+        })
+
+        let vue = new Vue({
+            router: router,
+            el: '#app'
+        });
+
+        window.vue = vue;
+
+        if (code === "toolbox-set") {
+            router.push('config');
+        }else{
+            router.push('/');
+        }
+    })
+
+
+</script>
+</html>
