@@ -1,22 +1,24 @@
 {
-	"pluginName": "toolbox",
-	"description": "网站工具盒, 可将你常用的工具网站收纳起来",
-	"version": "0.0.1",
-	"preload": "preload.js",
-	"main" : "index.html",
-	"logo": "tools.png",
-	"homepage" : "https://github.com/me10zyl/utools-toolbox",
-	"features": [
-		{
-		  "code": "toolbox",
-		  "explain": "网站工具盒",
-		  "cmds":["toolbox", "网站工具盒"]
-		},
-		{
-			"code": "toolbox-set",
-			"explain": "网站工具盒设置",
-			"cmds":["toolbox-set", "网站工具盒设置"]
-		}
-	],
-	"author": "me10zyl"
+  "pluginName": "下载选中的链接",
+  "description": "右键下载选中的链接文件",
+  "version": "0.0.1",
+  "preload": "preload.js",
+  "logo": "down.png",
+  "homepage": "https://github.com/me10zyl/utools-toolbox",
+  "features": [
+    {
+      "code": "urldownloader",
+      "explain": "下载选中的链接",
+      "cmds": [
+        {
+          "type": "regex",
+          "label": "下载选中的链接",
+          "match": "/http(s)?://.+/i",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      ]
+    }
+  ],
+  "author": "me10zyl"
 }
