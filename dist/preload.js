@@ -58,11 +58,6 @@ function getFileName(path){
     return filename;
 }
 
-//console.log(getFileName('https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png?adas#/fa'))
-//cosole.log(getFileName('https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png'))
-//cosole.log(getFileName('http://i3.ytimg.com/vi/J---aiyznGQ/mqdefault.jpg'))
-//console.log(getFileName('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1601456255625&di=735458a663c9079c8758e90b5dc8903e&imgtype=0&src=http%3A%2F%2Fdmimg.5054399.com%2Fallimg%2Fpkm%2Fpk%2F13.jpg'))
-
 window.exports = {
     "urldownloader": {
         mode: "none",

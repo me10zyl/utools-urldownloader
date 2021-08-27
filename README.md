@@ -2,4 +2,4 @@
 
 右键下载选中的链接文件
 
-![tutorial](https://raw.githubusercontent.com/me10zyl/utools-urldownloader/master/tutorial.gif)
+![tutorial](https://gitee.com/me10zyl/filebed/raw/master/images/utools-urldownloader-tutorial.gif)
